@@ -16,3 +16,5 @@ yarn-error.log
 database/
 database.sqlite
 .idea
+_idea_helper.php
+_idea_helper_models.php
