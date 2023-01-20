@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import TaskPage from "./pages/tasks";
 import HelpPage from "./pages/help";
 import LoginPage from "./pages/login";
+import axios from "axios";
 
 //react-router v6での記述
 const Router = () => {
+
+    useEffect(() => {
+        // axios.post("api/login", {
+        //     email: "yamada@example.com",
+        //     password: "123456789",
+        // }).then(response => {
+        //     console.log(response);
+
+        // })
+    },[]);
+
     return (
         <BrowserRouter>
             <header className="global-head">
