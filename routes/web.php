@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//reactでのルーティング時にLaravelのルーティングが優先されるため、reactの全てのページでindexが読み込まれるように設定
+Route::get('{all}', function () {
+    return view('index');
+})->where(['all' => '.*']);
