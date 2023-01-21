@@ -1,48 +1,65 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-
+import { Link, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, RouteProps } from "react-router-dom";
 import TaskPage from "./pages/tasks";
 import HelpPage from "./pages/help";
 import LoginPage from "./pages/login";
-import axios from "axios";
+import NotFoundPage from "./pages/error";
+import { useLogout, useUser } from "./queries/AuthQuery";
+import { useAuth } from "./hooks/AuthContext";
 
-//react-router v6での記述
 const Router = () => {
+    const logout = useLogout();
+    const { isAuth, setIsAuth } = useAuth();
+    const { isLoading, data: authUser } = useUser();
 
     useEffect(() => {
-        // axios.post("api/login", {
-        //     email: "yamada@example.com",
-        //     password: "123456789",
-        // }).then(response => {
-        //     console.log(response);
+        if (authUser) {
+            setIsAuth(true);
+        }
+    }, [authUser]);
 
-        // })
-    },[]);
+    const navigation = (
+        <header className="global-head">
+            <ul>
+                <li>
+                    <Link to={`/`}>ホーム</Link>
+                </li>
+                <li>
+                    <Link to={`/help`}>ヘルプ</Link>
+                </li>
+                <li onClick={() => logout.mutate()}>
+                    <span>ログアウト</span>
+                </li>
+            </ul>
+        </header>
+    );
+
+    const loginNavigation = (
+        <header className="global-head">
+            <ul>
+                <li>
+                    <Link to={`/help`}>ヘルプ</Link>
+                </li>
+                <li>
+                    <Link to={`/login`}>ログイン</Link>
+                </li>
+            </ul>
+        </header>
+    );
+
+    if (isLoading) return <div className="loader"></div>
 
     return (
+        //react-router v6での記述
         <BrowserRouter>
-            <header className="global-head">
-                <ul>
-                    <li>
-                        <Link to={`/`}>ホーム</Link>
-                    </li>
-                    <li>
-                        <Link to={`/help`}>ヘルプ</Link>
-                    </li>
-                    <li>
-                        <Link to={`/login`}>ログイン</Link>
-                    </li>
-                    <li>
-                        <span>ログアウト</span>
-                    </li>
-                </ul>
-            </header>
+            {isAuth ? navigation : loginNavigation}
 
             <Routes>
-                <Route path={`/`} element={<TaskPage />} />
+                <Route path={`/`} element={isAuth ? <TaskPage /> : <Navigate to="/login" replace />} />
                 <Route path={`/help`} element={<HelpPage />} />
-                <Route path={`/login`} element={<LoginPage />} />
+                <Route path={`/login`} element={isAuth ? <Navigate to="/" replace /> : <LoginPage />} />
+                <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </BrowserRouter>
     );
